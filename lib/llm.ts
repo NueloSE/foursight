@@ -107,7 +107,7 @@ async function callAnthropic(input: LLMInput): Promise<LLMResult> {
   const client = new Anthropic({ apiKey })
 
   const message = await client.messages.create({
-    model: 'claude-3-haiku-20240307',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 150,   // JSON output is never > ~100 tokens; keep cost minimal
     temperature: 0,
     system: SYSTEM_PROMPT,
@@ -125,14 +125,15 @@ async function callAnthropic(input: LLMInput): Promise<LLMResult> {
 }
 
 export async function callLLM(input: LLMInput): Promise<LLMResult> {
+  // Try Anthropic (Claude Haiku) first — DGrid used as fallback if available
   try {
-    return await callDGrid(input)
-  } catch (dgridError) {
-    console.warn('DGrid failed, falling back to Anthropic:', dgridError)
+    return await callAnthropic(input)
+  } catch (anthropicError) {
+    console.warn('Anthropic failed, falling back to DGrid:', anthropicError)
     try {
-      return await callAnthropic(input)
-    } catch (anthropicError) {
-      console.warn('Anthropic fallback failed:', anthropicError)
+      return await callDGrid(input)
+    } catch (dgridError) {
+      console.warn('DGrid fallback also failed:', dgridError)
       return FALLBACK_RESULT
     }
   }
