@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { AlertTriangle, FileText, CreditCard } from 'lucide-react'
@@ -28,15 +28,7 @@ function ResultsContent() {
     scanTimestamp: string
   }>(null)
 
-  useEffect(() => {
-    if (!address) {
-      router.replace('/')
-      return
-    }
-    runAnalysis()
-  }, [address, mode])
-
-  async function runAnalysis() {
+  const runAnalysis = useCallback(async () => {
     setLoading(true)
     setError('')
     setData(null)
@@ -65,7 +57,16 @@ function ResultsContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [address, mode])
+
+  useEffect(() => {
+    if (!address) {
+      router.replace('/')
+      return
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void runAnalysis()
+  }, [address, mode, runAnalysis, router])
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

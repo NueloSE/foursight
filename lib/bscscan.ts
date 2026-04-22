@@ -12,7 +12,7 @@ export async function fetchBscScan(contractAddress: string): Promise<BscScanToke
   const apiKey = getApiKey()
   const url = `${BSCSCAN_BASE}?module=token&action=tokeninfo&contractaddress=${contractAddress}&apikey=${apiKey}`
 
-  const res = await fetch(url, { next: { revalidate: 0 } })
+  const res = await fetch(url, { next: { revalidate: 0 }, signal: AbortSignal.timeout(8_000) })
 
   if (!res.ok) return null
 
@@ -27,7 +27,7 @@ export async function fetchWalletTokens(walletAddress: string): Promise<Portfoli
   const apiKey = getApiKey()
   const url = `${BSCSCAN_BASE}?module=account&action=tokentx&address=${walletAddress}&startblock=0&endblock=99999999&sort=desc&apikey=${apiKey}`
 
-  const res = await fetch(url, { next: { revalidate: 0 } })
+  const res = await fetch(url, { next: { revalidate: 0 }, signal: AbortSignal.timeout(8_000) })
 
   if (!res.ok) return []
 

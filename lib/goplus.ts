@@ -9,6 +9,7 @@ export async function fetchGoPlus(address: string): Promise<GoPlusData> {
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json' },
     next: { revalidate: 0 },
+    signal: AbortSignal.timeout(8_000),
   })
 
   if (!res.ok) {

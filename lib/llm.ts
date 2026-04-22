@@ -69,8 +69,12 @@ async function callDGrid(input: LLMInput): Promise<LLMResult> {
 
   if (!baseUrl || !apiKey) throw new Error('DGrid credentials not configured')
 
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 10_000)
+
   const res = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
+    signal: controller.signal,
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
@@ -85,6 +89,7 @@ async function callDGrid(input: LLMInput): Promise<LLMResult> {
       temperature: 0,
     }),
   })
+  clearTimeout(timeout)
 
   if (!res.ok) throw new Error(`DGrid API error: ${res.status}`)
 
@@ -102,7 +107,7 @@ async function callAnthropic(input: LLMInput): Promise<LLMResult> {
   const client = new Anthropic({ apiKey })
 
   const message = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-3-haiku-20240307',
     max_tokens: 150,   // JSON output is never > ~100 tokens; keep cost minimal
     temperature: 0,
     system: SYSTEM_PROMPT,

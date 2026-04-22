@@ -145,7 +145,7 @@ export default function ShareCard({ data }: ShareCardProps) {
         {/* Footer */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-secondary)' }}>
-            foursight.vercel.app
+            {(process.env.NEXT_PUBLIC_APP_URL || 'https://foursight-six.vercel.app').replace('https://', '')}
           </p>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-secondary)' }}>
             #fourmeme #BNBChain
