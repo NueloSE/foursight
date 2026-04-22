@@ -15,6 +15,7 @@ function ResultsContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const address = searchParams.get('address') || ''
+  const mode    = searchParams.get('mode')    || 'token'
 
   const [tab, setTab] = useState<Tab>('report')
   const [loading, setLoading] = useState(true)
@@ -33,7 +34,7 @@ function ResultsContent() {
       return
     }
     runAnalysis()
-  }, [address])
+  }, [address, mode])
 
   async function runAnalysis() {
     setLoading(true)
@@ -45,7 +46,7 @@ function ResultsContent() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address }),
+        body: JSON.stringify({ address, mode }),
       })
       const json = await res.json()
 
